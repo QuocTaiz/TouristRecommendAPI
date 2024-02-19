@@ -1,6 +1,12 @@
 from django.db import models
-
+from rest_framework.response import Response
 # Create your models here.
+
+class CustomResponse(Response):
+    def __init__(self, status, message, data=None):
+        response_data = {'status': status, 'message': message, 'data': data}
+        super().__init__(response_data)
+    
 
 class User(models.Model):
     id = models.AutoField(primary_key=True)
