@@ -19,9 +19,9 @@ from django.urls import path
 from api.views.UserView import *
 
 urlpatterns = [
-    path('admin', admin.site.urls),
-    path('users', UserDetail.as_view()),
-    path('users/<int:id>', UserInfo.as_view()),
-    path('users/login', UserLogin.as_view()),
-    path('users/changepw', UserChangePW.as_view())
+    path('api/v1/admin', admin.site.urls),
+    path('api/v1/users', UserDetail.as_view()),
+    path('api/v1/users/<int:id>', UserInfo.as_view()),
+    path('api/v1/users/login', UserLogin.as_view()),
+    path('api/v1/users/changepw', UserChangePW.as_view())
 ]
