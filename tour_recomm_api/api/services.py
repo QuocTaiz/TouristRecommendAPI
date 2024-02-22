@@ -14,6 +14,11 @@ class TokenManager:
     def random():
         return get_random_string(32)
     
+    def getUser(key):
+        token = Token.objects.get(key = key)
+        user = User.objects.get(id = token.user_id)
+        return user
+    
     def create(user_id):
         key = TokenManager.random()
         created_at = timezone.now().strftime("%Y-%m-%d %H:%M:%S")

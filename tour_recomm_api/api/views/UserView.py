@@ -11,7 +11,7 @@ from rest_framework import status
 
 class UserDetail(APIView):
     
-    http_method_names = ['get', 'head', 'post']
+    http_method_names = ['get', 'head', 'post', 'patch']
 
     def get(self, request):
         
@@ -44,6 +44,29 @@ class UserDetail(APIView):
             dt_created = timezone.now().strftime("%Y-%m-%d %H:%M:%S")
             user = User.objects.create(email=email, hashpw=hashpw, fullname=fullname, role=default_role, created_at=dt_created)
             return CustomResponse(status.HTTP_201_CREATED, 'Create user successful!', data=user.id)
+    
+    def patch(self, request):
+
+        key_token = request.headers.get('token')
+
+        if not TokenManager.verify(key_token):
+            return CustomResponse(status.HTTP_401_UNAUTHORIZED, 'UNAUTHORIZED!')
+
+        token = Token.objects.get(key = key_token)
+        user_id = token.user_id
+
+        try:
+            obj = User.objects.get(id=user_id)
+
+        except User.DoesNotExist:
+            return CustomResponse(status= status.HTTP_404_NOT_FOUND, message= 'Not found users!')
+        
+        serializer = UserSerializer(obj, data= request.data, partial= True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return CustomResponse(status= status.HTTP_205_RESET_CONTENT, message= 'Update successful! Please reset UI')
+        return CustomResponse(status= status.HTTP_400_BAD_REQUEST, message= 'Data not vaild!')
 
 class UserInfo(APIView):
 
@@ -58,27 +81,6 @@ class UserInfo(APIView):
         
         serializer = UserSerializer(obj)
         return CustomResponse(status.HTTP_200_OK, 'Get user successful!', serializer.data)
-        
-
-    def patch(self, request, id):
-
-        token = request.headers.get('token')
-
-        if not TokenManager.verify(token):
-            return CustomResponse(status.HTTP_401_UNAUTHORIZED, 'UNAUTHORIZED!')
-
-        try:
-            obj = User.objects.get(id=id)
-
-        except User.DoesNotExist:
-            return CustomResponse(status= status.HTTP_404_NOT_FOUND, message= 'Not found this id!')
-        
-        serializer = UserSerializer(obj, data= request.data, partial= True)
-
-        if serializer.is_valid():
-            serializer.save()
-            return CustomResponse(status= status.HTTP_205_RESET_CONTENT, message= 'Update successful! Please reset UI')
-        return CustomResponse(status= status.HTTP_400_BAD_REQUEST, message= 'Data not vaild!')
 
     def delete(self, request, id):
 
@@ -127,6 +129,26 @@ class UserLogin(APIView):
         token = TokenManager.update(token)
 
         return CustomResponse(status.HTTP_200_OK, 'Login successful!', token.key)
+
+class UserChangePW(APIView):
+
+    http_method_names = ['patch']
+
+    def patch(self, request):
+
+        key_token = request.headers.get('token')
+
+        if not TokenManager.verify(key_token):
+            return CustomResponse(status.HTTP_401_UNAUTHORIZED, 'UNAUTHORIZED!')
+
+        hashpw = HashPw.hash(request.data['pw'])
+        user = TokenManager.getUser(key_token)
+
+        user.hashpw = hashpw
+        user.save()
+
+        return CustomResponse(status.HTTP_205_RESET_CONTENT, "Change pw successful! Please login again!")
+        
 
 
 
