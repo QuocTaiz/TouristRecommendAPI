@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 from rest_framework.response import Response
 # Create your models here.
 
@@ -18,5 +19,9 @@ class User(models.Model):
     role = models.TextField(null=False, blank=False)
     created_at = models.DateTimeField(null=False, blank=False)
 
-    
+class Token(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.IntegerField(null=False, blank=False, unique=True)
+    key = models.TextField(null=False, blank=False)
+    created_at = models.DateTimeField(null=False, blank=False)
     
