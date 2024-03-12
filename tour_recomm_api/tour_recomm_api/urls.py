@@ -19,6 +19,7 @@ from django.urls import path
 from api.views.UserView import *
 from api.views.TouristView import *
 from api.views.HistoryView import *
+from api.views.RatingView import *
 
 urlpatterns = [
     path('admin', admin.site.urls),
@@ -31,5 +32,7 @@ urlpatterns = [
     path('api/v1/tourist', TouristDetail.as_view()),
     path('api/v1/tourist/<int:id>', TouristInfo.as_view()),
 
-    path('api/v1/history', HistoryInfo.as_view())
+    path('api/v1/history', HistoryInfo.as_view()),
+
+    path('api/v1/rating', RatingInfo.as_view())
 ]

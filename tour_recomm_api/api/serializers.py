@@ -43,9 +43,11 @@ class HistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = History
         fields = '__all__'
-    #     extra_fields = ['tourist']
-    
-    # tourist = serializers.SerializerMethodField()
 
-    # def get_tourist(self, obj):
-    #     return TouristSerializer(obj).data
+# ====================================================
+# Rating Serializer
+class RatingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Rating
+        fields = ('tourist_id', 'rate')

@@ -1,5 +1,6 @@
 from django.db import models
 from rest_framework.response import Response
+from django.core.validators import MinValueValidator, MaxValueValidator
 # Create your models here.
 
 class CustomResponse(Response):
@@ -27,6 +28,10 @@ class Tourist(models.Model):
     info = models.TextField(null=False, blank=False)
     url_imgs = models.TextField(null=False, blank=False)
     time_visit = models.IntegerField(default=0)
+    rate = models.FloatField(
+        default=0.0,
+        validators=[MinValueValidator(0.0), MaxValueValidator(5.0)]    
+    )
 
 class History(models.Model):
     id = models.AutoField(primary_key=True)
@@ -34,6 +39,15 @@ class History(models.Model):
     tourist_id = models.IntegerField(null=False, blank=False)
     time = models.IntegerField(default=0)
     last_view = models.DateTimeField(null=False, blank=False)
+
+class Rating(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.IntegerField(null=False, blank=False)
+    tourist_id = models.IntegerField(null=False, blank=False)
+    rate = models.FloatField(
+        default=0.0,
+        validators=[MinValueValidator(0.0), MaxValueValidator(5.0)]    
+    )
 
 class Token(models.Model):
     id = models.AutoField(primary_key=True)

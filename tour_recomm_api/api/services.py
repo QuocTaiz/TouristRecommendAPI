@@ -1,5 +1,5 @@
 import hashlib
-from .models import Token, User, History
+from .models import Token, User, History, Rating, Tourist
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 
@@ -57,6 +57,18 @@ class HistoryWriter:
         htr.time += 1
         htr.last_view = last_view
         htr.save()
+
+class RatingManager:
+    def update_rating_tourist(tourist_id):
+        list_rate = Rating.objects.raw("select * from api_rating where tourist_id="+str(tourist_id))
+        mean = 0
+        for rate in list_rate:
+            mean += rate.rate
+        mean = mean / len(list_rate)
+
+        tourist = Tourist.objects.get(id=tourist_id)
+        tourist.rate = mean
+        tourist.save()
 
 class Province:
 
