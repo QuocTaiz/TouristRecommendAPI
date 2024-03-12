@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 from rest_framework.response import Response
 # Create your models here.
 
@@ -18,6 +17,23 @@ class User(models.Model):
     gender = models.SmallIntegerField(default=0)
     role = models.TextField(null=False, blank=False)
     created_at = models.DateTimeField(null=False, blank=False)
+
+class Tourist(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.TextField(null=False, blank=False)
+    special = models.TextField(null=False, blank=False)
+    area = models.TextField(null=False, blank=False)
+    address = models.TextField(null=False, blank=False)
+    info = models.TextField(null=False, blank=False)
+    url_imgs = models.TextField(null=False, blank=False)
+    time_visit = models.IntegerField(default=0)
+
+class History(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.IntegerField(null=False, blank=False)
+    tourist_id = models.IntegerField(null=False, blank=False)
+    time = models.IntegerField(default=0)
+    last_view = models.DateTimeField(null=False, blank=False)
 
 class Token(models.Model):
     id = models.AutoField(primary_key=True)
