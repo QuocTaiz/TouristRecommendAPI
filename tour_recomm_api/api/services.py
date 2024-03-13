@@ -67,7 +67,7 @@ class RatingManager:
         mean = mean / len(list_rate)
 
         tourist = Tourist.objects.get(id=tourist_id)
-        tourist.rate = mean
+        tourist.rate = round(mean, 1)
         tourist.save()
 
 class Province:

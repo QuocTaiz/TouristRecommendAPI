@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from ..models import History, CustomResponse, Tourist, Rating
+from ..models import CustomResponse, Rating
 from ..serializers import RatingSerializer
 from ..services import TokenManager, RatingManager
 from rest_framework import status

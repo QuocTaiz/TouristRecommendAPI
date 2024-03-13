@@ -20,6 +20,7 @@ from api.views.UserView import *
 from api.views.TouristView import *
 from api.views.HistoryView import *
 from api.views.RatingView import *
+from api.views.RecommanderView import *
 
 urlpatterns = [
     path('admin', admin.site.urls),
@@ -34,5 +35,7 @@ urlpatterns = [
 
     path('api/v1/history', HistoryInfo.as_view()),
 
-    path('api/v1/rating', RatingInfo.as_view())
+    path('api/v1/rating', RatingInfo.as_view()),
+
+    path('api/v1/recommend', RecommanderInfo.as_view())
 ]
