@@ -85,3 +85,4 @@ class TouristSpecial:
         dict_spc = {1: 'Du lịch văn hóa', 2: 'Di tích', 3: 'Du lịch tự nhiên', 4: 'Chùa, đình, đền, tháp, nhà thờ, lăng mộ', 5: 'Du lịch thể thao', 6: 'Bảo tàng', 7: 'Du lịch biển', 8: 'Công viên'}
 
         return dict_spc[int(id)]
+
