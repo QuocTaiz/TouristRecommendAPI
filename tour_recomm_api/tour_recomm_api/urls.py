@@ -17,11 +17,25 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from api.views.UserView import *
+from api.views.TouristView import *
+from api.views.HistoryView import *
+from api.views.RatingView import *
+from api.views.RecommanderView import *
 
 urlpatterns = [
-    path('api/v1/admin', admin.site.urls),
+    path('admin', admin.site.urls),
     path('api/v1/users', UserDetail.as_view()),
     path('api/v1/users/<int:id>', UserInfo.as_view()),
+    path('api/v1/users/profile', UserProfile.as_view()),
     path('api/v1/users/login', UserLogin.as_view()),
-    path('api/v1/users/changepw', UserChangePW.as_view())
+    path('api/v1/users/changepw', UserChangePW.as_view()),
+
+    path('api/v1/tourist', TouristDetail.as_view()),
+    path('api/v1/tourist/<int:id>', TouristInfo.as_view()),
+
+    path('api/v1/history', HistoryInfo.as_view()),
+
+    path('api/v1/rating', RatingInfo.as_view()),
+
+    path('api/v1/recommend', RecommanderInfo.as_view())
 ]

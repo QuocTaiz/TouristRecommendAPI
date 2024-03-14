@@ -17,7 +17,7 @@ class UserDetail(APIView):
         
         role_accept = ['admin']
 
-        token = request.headers.get('token')
+        token = request.headers.get('Authorization')
         if not TokenManager.verify(token) in role_accept:
             return CustomResponse(status.HTTP_401_UNAUTHORIZED, 'UNAUTHORIZED!')
 
@@ -47,7 +47,7 @@ class UserDetail(APIView):
     
     def patch(self, request):
 
-        key_token = request.headers.get('token')
+        key_token = request.headers.get('Authorization')
 
         if not TokenManager.verify(key_token):
             return CustomResponse(status.HTTP_401_UNAUTHORIZED, 'UNAUTHORIZED!')
@@ -86,7 +86,7 @@ class UserInfo(APIView):
 
         role_accept = ['admin']
 
-        token = request.headers.get('token')
+        token = request.headers.get('Authorization')
 
         if not TokenManager.verify(token) in role_accept:
             return CustomResponse(status.HTTP_401_UNAUTHORIZED, 'UNAUTHORIZED!')
@@ -100,7 +100,47 @@ class UserInfo(APIView):
         obj.delete()
         TokenManager.delete(Token.objects.get(key = token))
         return CustomResponse(status.HTTP_204_NO_CONTENT, 'Delete user successful!')
-    
+
+class UserProfile(APIView):
+
+    http_method_names = ['get', 'patch']
+
+    def get(self, request):
+
+        key_token = request.headers.get('Authorization')
+
+        if not TokenManager.verify(key_token):
+            return CustomResponse(status.HTTP_401_UNAUTHORIZED, 'UNAUTHORIZED!')
+        
+        user = TokenManager.getUser(key_token)
+
+        serializers = UserSerializer(user)
+
+        return CustomResponse(status.HTTP_200_OK, 'Get data successful!', serializers.data)
+
+    def patch(self, request):
+
+        key_token = request.headers.get('Authorization')
+
+        if not TokenManager.verify(key_token):
+            return CustomResponse(status.HTTP_401_UNAUTHORIZED, 'UNAUTHORIZED!')
+
+        token = Token.objects.get(key = key_token)
+        user_id = token.user_id
+
+        try:
+            obj = User.objects.get(id=user_id)
+
+        except User.DoesNotExist:
+            return CustomResponse(status= status.HTTP_404_NOT_FOUND, message= 'Not found users!')
+        
+        serializer = UserSerializer(obj, data= request.data, partial= True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return CustomResponse(status= status.HTTP_205_RESET_CONTENT, message= 'Update successful! Please reset UI')
+        return CustomResponse(status= status.HTTP_400_BAD_REQUEST, message= 'Data not vaild!')
+
 class UserLogin(APIView):
     http_method_names = ['post']
 
@@ -136,14 +176,19 @@ class UserChangePW(APIView):
 
     def patch(self, request):
 
-        key_token = request.headers.get('token')
+        key_token = request.headers.get('Authorization')
 
         if not TokenManager.verify(key_token):
             return CustomResponse(status.HTTP_401_UNAUTHORIZED, 'UNAUTHORIZED!')
 
-        hashpw = HashPw.hash(request.data['pw'])
+        hash_old_pw = HashPw.hash(request.data['oldpw'])
+        hashpw = HashPw.hash(request.data['newpw'])
         user = TokenManager.getUser(key_token)
 
+        if user.hashpw != hash_old_pw:
+            return CustomResponse(status.HTTP_400_BAD_REQUEST, "Wrong old password!")
+        
+        
         user.hashpw = hashpw
         user.save()
 
